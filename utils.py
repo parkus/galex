@@ -74,13 +74,14 @@ def guess_tstep(curve_tbl):
     
 def collapse_tvec(tvec,maxgap,newgap=None):
     if not newgap: newgap = maxgap
-    tvec = tvec - tvec[0]
+    tvec = tvec
     gaps = np.concatenate(([0.0],tvec[1:] - tvec[:-1]))
     gapindex = np.nonzero(gaps > maxgap)[0]
     gaplen = gaps[gaps > maxgap]
     gaps[gaps > maxgap] = newgap
     tvec_new = gaps.cumsum()
-    return tvec_new, gapindex, gaplen
+    midgap = (tvec_new[gapindex-1] + tvec_new[gapindex])/2.0
+    return tvec_new, midgap, gaplen
     
 def quickplot(curve,yvals='cps',spaced=False):
     if curve.__class__ == str:
