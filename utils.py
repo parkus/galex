@@ -148,5 +148,22 @@ def Fbol_SDSSg(Teff_vec, gmag_vec):
     FbolF0 = FgF0/g2bol_vec
     return FbolF0
     
+def find_loners(radec, radec_all, radius):
+    """Returns the indices of only the stars with no neighbors within radius.
     
+    radec contains the coordinates of the stars of interest as an Nx2 numpy 
+    array (ra, dec), and radec_all of every source that might contaminate the
+    stellar flux.
+    """
     
+    loners = np.ones(len(radec))
+    for i,(ra,dec) in enumerate(radec):
+        dra = abs(radec_all[:,0] - ra)
+        ddec = abs(radec_all[:,1] - dec)
+        keep = np.logical_and(dra < radius, ddec < radius)
+        r = np.sqrt((dra[keep]**2 + ddec[keep]**2))
+        r = r[r != 0]
+        if any(r < radius):
+            loners[i] = False
+            
+    return loners
